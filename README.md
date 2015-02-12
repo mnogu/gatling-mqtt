@@ -37,6 +37,47 @@ Put the jar file to `lib` directory in Gatling:
     $ cd /path/to/gatling-charts-highcharts-bundle-2.1.*
     $ vi user-files/simulations/MqttSimulation.scala
 
+This library supports the following options:
+
+* host
+* clientId
+* cleanSession
+* keepAlive
+* userName
+* password
+* willTopic
+* willMessage
+* willQos
+* willRetain
+* version
+* connectAttemptsMax
+* reconnectAttemptsMax
+* reconnectDelay
+* reconnectDelayMax
+* reconnectBackOffMultiplier
+* receiveBufferSize
+* sendBufferSize
+* trafficClass
+* maxReadRate
+* maxWriteRate
+
+See the document of [mqtt-client](https://github.com/fusesource/mqtt-client)
+for the description of these options.
+For example, the `host` option corresponds `setHost()` method in mqtt-client.
+That is, you can obtain an option name in this library
+by removing `set` from a method name in mqtt-client
+and then making the first character lowercase.
+
+The following options also supports [Expression](http://gatling.io/docs/2.1.4/session/expression_el.html):
+
+* host
+* clientId
+* userName
+* password
+* willTopic
+* willMessage
+* version
+
 Here is a sample simulation file:
 
 ```scala
