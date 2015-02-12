@@ -195,6 +195,10 @@ class MqttRequestAction(
           }
         }
         override def onFailure(value: Throwable): Unit = {
+          mqttAttributes.requestName(session).map { resolvedRequestName =>
+            MqttRequestAction.reportUnbuildableRequest(
+              resolvedRequestName, session, value.getMessage)
+          }
           connection.disconnect(null)
         }
       })
