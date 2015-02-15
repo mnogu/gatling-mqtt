@@ -68,7 +68,7 @@ That is, you can obtain an option name in this library
 by removing `set` from a method name in mqtt-client
 and then making the first character lowercase.
 
-The following options also supports [Expression](http://gatling.io/docs/2.1.4/session/expression_el.html):
+The following options also support [Expression](http://gatling.io/docs/2.1.4/session/expression_el.html):
 
 * host
 * clientId
@@ -107,7 +107,7 @@ class MqttSimulation extends Simulation {
 }
 ```
 
-The following parameters of `publish()` supports Expression:
+The following parameters of `publish()` support Expression:
 
 * topic
 * payload
