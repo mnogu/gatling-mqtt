@@ -239,19 +239,12 @@ class MqttRequestAction(
               responseEndDate,
               if (isSuccess) OK else KO,
               message)
+
+            connection.disconnect(null)
           }
         })
 
       next ! session
     }
-  }
-
-  override def postStop(): Unit = {
-    super.postStop()
-    mqtt.callbackConnection().disconnect(new Callback[Void] {
-      override def onFailure(value: Throwable): Unit = ()
-
-      override def onSuccess(void: Void): Unit = ()
-    })
   }
 }
