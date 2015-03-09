@@ -94,11 +94,11 @@ class MqttSimulation extends Simulation {
 
   val scn = scenario("MQTT Test")
     .exec(mqtt("request")
-    // topic: "foo"
-    // payload: "Hello"
-    // QoS: AT_LEAST_ONCE
-    // retain: false
-    .publish("foo", "Hello", QoS.AT_LEAST_ONCE, retain = false))
+      // topic: "foo"
+      // payload: "Hello"
+      // QoS: AT_LEAST_ONCE
+      // retain: false
+      .publish("foo", "Hello", QoS.AT_LEAST_ONCE, retain = false))
 
   setUp(
     scn
@@ -138,11 +138,11 @@ class MqttSimulation extends Simulation {
     //   ...
     .feed(csv("mqtt.csv").circular)
     .exec(mqtt("request")
-    // topic: the values of "topic" column in mqtt.csv
-    // payload: the values of "payload" column in mqtt.csv
-    // QoS: AT_LEAST_ONCE
-    // retain: false
-    .publish("${topic}", "${payload}", QoS.AT_LEAST_ONCE, retain = false))
+      // topic: the values of "topic" column in mqtt.csv
+      // payload: the values of "payload" column in mqtt.csv
+      // QoS: AT_LEAST_ONCE
+      // retain: false
+      .publish("${topic}", "${payload}", QoS.AT_LEAST_ONCE, retain = false))
 
   setUp(
     scn
