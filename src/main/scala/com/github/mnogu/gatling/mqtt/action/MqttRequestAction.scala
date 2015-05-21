@@ -240,11 +240,12 @@ class MqttRequestAction(
               if (isSuccess) OK else KO,
               message)
 
+            next ! session
+
             connection.disconnect(null)
           }
         })
 
-      next ! session
     }
   }
 }
