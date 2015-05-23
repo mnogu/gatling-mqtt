@@ -1,6 +1,6 @@
 # Gatling-MQTT
 
-An unofficial [Gatling](http://gatling.io/) stress test library
+An unofficial [Gatling](http://gatling.io/) stress test plugin
 for [MQTT](http://mqtt.org/).
 
 ## Usage
@@ -37,7 +37,7 @@ Put the jar file to `lib` directory in Gatling:
     $ cd /path/to/gatling-charts-highcharts-bundle-2.1.*
     $ vi user-files/simulations/MqttSimulation.scala
 
-This library supports the following options:
+This plugin supports the following options:
 
 * host
 * clientId
@@ -64,7 +64,7 @@ This library supports the following options:
 See the document of [mqtt-client](https://github.com/fusesource/mqtt-client)
 for the description of these options.
 For example, the `host` option corresponds `setHost()` method in mqtt-client.
-That is, you can obtain an option name in this library
+That is, you can obtain an option name in this plugin
 by removing `set` from a method name in mqtt-client
 and then making the first character lowercase.
 
