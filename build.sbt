@@ -1,8 +1,8 @@
-organization := "gatling-mqtt"
+organization := "com.github.mnogu"
 
 name := "gatling-mqtt"
 
-version := "0.0.5-SNAPSHOT"
+version := "0.0.4-SNAPSHOT"
 
 scalaVersion := "2.11.7"
 
