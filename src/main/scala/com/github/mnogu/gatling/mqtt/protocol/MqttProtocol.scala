@@ -1,12 +1,15 @@
-package com.github.mnogu.gatling.mqtt.config
+package com.github.mnogu.gatling.mqtt.protocol
 
-import io.gatling.core.config.Protocol
+import akka.actor.ActorSystem
+import io.gatling.core.CoreComponents
+import io.gatling.core.config.GatlingConfiguration
+import io.gatling.core.protocol.{Protocol, ProtocolKey}
 import io.gatling.core.session.Expression
-
 import org.fusesource.mqtt.client.QoS
 
 object MqttProtocol {
-  val DefaultMqttProtocol = MqttProtocol(
+
+  def apply(configuration: GatlingConfiguration): MqttProtocol = MqttProtocol(
     host = None,
     optionPart = MqttProtocolOptionPart(
       clientId = None,
@@ -32,6 +35,27 @@ object MqttProtocol {
     throttlingPart = MqttProtocolThrottlingPart(
       maxReadRate = None,
       maxWriteRate = None))
+
+  val MqttProtocolKey = new ProtocolKey {
+
+    type Protocol = MqttProtocol
+    type Components = MqttComponents
+
+    def protocolClass: Class[io.gatling.core.protocol.Protocol] = classOf[MqttProtocol].asInstanceOf[Class[io.gatling.core.protocol.Protocol]]
+
+    def defaultProtocolValue(configuration: GatlingConfiguration): MqttProtocol = MqttProtocol(configuration)
+
+    def newComponents(system: ActorSystem, coreComponents: CoreComponents): MqttProtocol => MqttComponents = {
+
+      mqttProdocol => {
+        val mqttComponents = MqttComponents (
+          mqttProdocol
+        )
+
+        mqttComponents
+      }
+    }
+  }
 }
 
 case class MqttProtocol(
