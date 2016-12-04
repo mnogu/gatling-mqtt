@@ -1,26 +1,26 @@
 package com.github.mnogu.gatling.mqtt.action
 
-import akka.actor.ActorDSL.actor
-import akka.actor.ActorRef
-import com.github.mnogu.gatling.mqtt.config.MqttProtocol
+import com.github.mnogu.gatling.mqtt.protocol.{MqttComponents, MqttProtocol}
 import com.github.mnogu.gatling.mqtt.request.builder.MqttAttributes
+import io.gatling.core.action.Action
 import io.gatling.core.action.builder.ActionBuilder
-import io.gatling.core.config.Protocols
-import org.fusesource.mqtt.client.MQTT
+import io.gatling.core.structure.ScenarioContext
 
 class MqttRequestActionBuilder(mqttAttributes: MqttAttributes)
   extends ActionBuilder {
 
-  override def registerDefaultProtocols(protocols: Protocols): Protocols =
-    protocols + MqttProtocol.DefaultMqttProtocol
+  override def build(
+    ctx: ScenarioContext, next: Action
+  ): Action = {
+    import ctx._
 
-  override def build(next: ActorRef, protocols: Protocols): ActorRef = {
-    val mqttProtocol = protocols.getProtocol[MqttProtocol].getOrElse(
-      throw new UnsupportedOperationException(
-        "MQTT Protocol wasn't registered"))
-    val mqtt = new MQTT()
-
-    actor(actorName("mqttRequest"))(new MqttRequestAction(
-      mqtt, mqttAttributes, mqttProtocol, next))
+    val mqttComponents : MqttComponents = protocolComponentsRegistry.components(MqttProtocol.MqttProtocolKey)
+    
+    new MqttRequestAction(
+      mqttAttributes,
+      coreComponents,
+      mqttComponents.mqttProtocol,
+      next
+    )
   }
 }

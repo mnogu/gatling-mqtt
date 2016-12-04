@@ -1,11 +1,11 @@
 name := "gatling-mqtt"
 
-version := "0.0.4-SNAPSHOT"
+version := "0.1.0-SNAPSHOT"
 
-scalaVersion := "2.11.5"
+scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
-  "io.gatling" % "gatling-core" % "2.1.4" % "provided",
+  "io.gatling" % "gatling-core" % "2.2.3" % "provided",
   "org.fusesource.mqtt-client" % "mqtt-client" % "1.10"
 )
 

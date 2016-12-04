@@ -1,34 +1,28 @@
 package com.github.mnogu.gatling.mqtt.action
 
-import akka.actor.ActorRef
-import com.github.mnogu.gatling.mqtt.config.MqttProtocol
+import com.github.mnogu.gatling.mqtt.protocol.MqttProtocol
 import com.github.mnogu.gatling.mqtt.request.builder.MqttAttributes
+import io.gatling.commons.stats.{KO, OK}
+import io.gatling.commons.util.ClockSingleton._
+import io.gatling.commons.validation.Validation
+import io.gatling.core.CoreComponents
 import io.gatling.core.Predef._
-import io.gatling.core.action.{Failable, Interruptable}
-import io.gatling.core.result.message.{KO, OK}
-import io.gatling.core.result.writer.DataWriterClient
+import io.gatling.core.action.{Action, ExitableAction}
 import io.gatling.core.session._
-import io.gatling.core.util.TimeHelper._
-import io.gatling.core.validation.Validation
-import org.fusesource.mqtt.client.{MQTT, Callback, QoS, CallbackConnection}
-
-object MqttRequestAction extends DataWriterClient {
-  def reportUnbuildableRequest(
-      requestName: String,
-      session: Session,
-      errorMessage: String): Unit = {
-    val now = nowMillis
-    writeRequestData(
-      session, requestName, now, now, now, now, KO, Some(errorMessage))
-  }
-}
+import io.gatling.core.stats.message.ResponseTimings
+import io.gatling.core.util.NameGen
+import org.fusesource.mqtt.client.{Callback, CallbackConnection, MQTT, QoS}
 
 class MqttRequestAction(
-  val mqtt: MQTT,
   val mqttAttributes: MqttAttributes,
+  val coreComponents : CoreComponents,
   val mqttProtocol: MqttProtocol,
-  val next: ActorRef)
-    extends Interruptable with Failable with DataWriterClient {
+  val next: Action)
+   extends ExitableAction with NameGen {
+
+  val statsEngine = coreComponents.statsEngine
+
+  override val name = genName("mqttRequest")
 
   private def configureHost(session: Session)(mqtt: MQTT): Validation[MQTT] = {
     mqttProtocol.host match {
@@ -167,7 +161,9 @@ class MqttRequestAction(
     }
   }
 
-  override def executeOrFail(session: Session): Validation[Unit] = {
+  override def execute(session: Session): Unit = recover(session) {
+    val mqtt = new MQTT()
+
     configureHost(session)(mqtt)
       .flatMap(configureClientId(session))
       .flatMap(configureUserName(session))
@@ -196,8 +192,7 @@ class MqttRequestAction(
         }
         override def onFailure(value: Throwable): Unit = {
           mqttAttributes.requestName(session).map { resolvedRequestName =>
-            MqttRequestAction.reportUnbuildableRequest(
-              resolvedRequestName, session, value.getMessage)
+              statsEngine.reportUnbuildableRequest(session, resolvedRequestName, value.getMessage)
           }
           connection.disconnect(null)
         }
@@ -216,7 +211,6 @@ class MqttRequestAction(
 
     payload(session).map { resolvedPayload =>
       val requestStartDate = nowMillis
-      val requestEndDate = nowMillis
 
       connection.publish(
         topic, resolvedPayload.getBytes, qos, retain, new Callback[Void] {
@@ -227,25 +221,22 @@ class MqttRequestAction(
             writeData(isSuccess = true, None)
 
           private def writeData(isSuccess: Boolean, message: Option[String]) = {
-            val responseStartDate = nowMillis
-            val responseEndDate = nowMillis
+            val requestEndDate = nowMillis
 
-            writeRequestData(
+            statsEngine.logResponse(
               session,
               requestName,
-              requestStartDate,
-              requestEndDate,
-              responseStartDate,
-              responseEndDate,
+              ResponseTimings(startTimestamp = requestStartDate, endTimestamp = requestEndDate),
               if (isSuccess) OK else KO,
-              message)
+              None,
+              message
+            )
 
             next ! session
 
             connection.disconnect(null)
           }
         })
-
     }
   }
 }

@@ -21,7 +21,7 @@ If you want to change the version of Gatling used to create a jar file,
 change the following line in [`build.sbt`](build.sbt):
 
 ```scala
-"io.gatling" % "gatling-core" % "2.1.4" % "provided",
+"io.gatling" % "gatling-core" % "2.2.3" % "provided",
 ```
 
 and run `sbt assembly`.
@@ -30,11 +30,12 @@ and run `sbt assembly`.
 
 Put the jar file to `lib` directory in Gatling:
 
-    $ cp target/scala-2.11/gatling-mqtt-assembly-*.jar /path/to/gatling-charts-highcharts-bundle-2.1.*/lib
+    $ cp target/scala-2.11/gatling-mqtt-assembly-*.jar /path/to/gatling-charts-highcharts-bundle-2.2.*/lib
 
 ###  Creating a simulation file
 
-    $ cd /path/to/gatling-charts-highcharts-bundle-2.1.*
+    $ cp gatling-mqtt/src/test/scala/com/github/mnogu/gatling/mqtt/test/MqttSimulation.scala /path/to/gatling-charts-highcharts-bundle-2.2.*/user-files/simulations
+    $ cd /path/to/gatling-charts-highcharts-bundle-2.2.*
     $ vi user-files/simulations/MqttSimulation.scala
 
 This plugin supports the following options:
@@ -68,7 +69,7 @@ That is, you can obtain an option name in this plugin
 by removing `set` from a method name in mqtt-client
 and then making the first character lowercase.
 
-The following options also support [Expression](http://gatling.io/docs/2.1.4/session/expression_el.html):
+The following options also support [Expression](http://gatling.io/docs/2.2.3/session/expression_el.html):
 
 * host
 * clientId
